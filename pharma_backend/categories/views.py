@@ -5,6 +5,10 @@ from django.db import models
 
 from .models import Medicament
 from .serializers import MedicamentSerializer
+from rest_framework.viewsets import ModelViewSet
+from .models import Category
+from .serializers import CategorySerializer
+
 
 
 class MedicamentViewSet(ModelViewSet):
@@ -23,3 +27,9 @@ class MedicamentViewSet(ModelViewSet):
         serializer = self.get_serializer(low_stock, many=True)
 
         return Response(serializer.data)
+    
+
+class CategoryViewSet(ModelViewSet):
+
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
