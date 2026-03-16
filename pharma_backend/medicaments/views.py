@@ -3,14 +3,25 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import F
 
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
+
 from .models import Medicament
 from .serializers import MedicamentSerializer
 
 
 class MedicamentViewSet(ModelViewSet):
+    """
+    API for managing medicaments.
+    """
 
     queryset = Medicament.objects.filter(est_actif=True)
     serializer_class = MedicamentSerializer
+
+    # Filters and search
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ["categorie", "ordonnance_requise"]
+    search_fields = ["nom", "dci"]
 
     def perform_destroy(self, instance):
         """
