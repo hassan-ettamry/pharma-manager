@@ -1,5 +1,5 @@
 from django.db import models
-from apps.medicaments.models import Medicament
+from medicaments.models import Medicament
 
 
 class Vente(models.Model):

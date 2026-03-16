@@ -1,5 +1,5 @@
 from django.db import models
-from apps.categories.models import Category
+from categories.models import Category
 
 
 class Medicament(models.Model):
