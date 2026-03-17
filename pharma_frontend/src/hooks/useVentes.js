@@ -22,7 +22,8 @@ export const useVentes = () => {
       const data = await fetchVentes();
       setVentes(data.results || data);
     } catch (err) {
-      setError("Error loading ventes");
+      //setError("Error loading ventes");
+      console.error(err.response.data);
     } finally {
       setLoading(false);
     }

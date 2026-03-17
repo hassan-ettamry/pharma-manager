@@ -34,11 +34,13 @@ http://127.0.0.1:8000/api/schema/swagger-ui/
 
 ## 📁 Project Structure
 
+```
 src/
-  api/         → API calls (Axios)
-  hooks/       → business logic
-  components/  → reusable UI components
-  pages/       → application pages
+├── api/        # API calls (Axios)
+├── hooks/      # business logic
+├── components/ # reusable UI components
+└── pages/      # application pages
+```
 
 ## ✅ Features
 

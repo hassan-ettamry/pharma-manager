@@ -15,9 +15,14 @@ export const fetchVentes = async () => {
  * @returns {Promise<Object>}
  */
 export const createVente = async (data) => {
-  const response = await axiosInstance.post("/ventes/", data);
-  return response.data;
-};
+    try {
+      const response = await axiosInstance.post("/ventes/", data);
+      return response.data;
+    } catch (error) {
+      console.log("BACKEND ERROR ", error.response.data);
+      throw error;
+    }
+  };
 
 /**
  * Cancel a sale
