@@ -142,7 +142,7 @@ export default function MedicamentsPage() {
             <div>
               {m.nom} — Stock: {m.stock_actuel}
               {m.stock_actuel <= m.stock_minimum && (
-                <span className="low"> ⚠ Low</span>
+                <span className="low"> Low</span>
               )}
             </div>
 

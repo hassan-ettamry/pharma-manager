@@ -1,69 +1,69 @@
 import { useState } from "react";
-import { useMedicaments } from "../hooks/useMedicaments";
+import { useVentes } from "../hooks/useVentes";
 
 /**
- * Form to create a vente (sale)
+ * Sales page
  */
-export default function VenteForm({ onAdd }) {
-  const { medicaments, loading } = useMedicaments();
+export default function VentesPage() {
+  const { ventes, addVente, annulerVente, loading } = useVentes();
 
   const [medicamentId, setMedicamentId] = useState("");
-  const [quantite, setQuantite] = useState("");
+  const [quantite, setQuantite] = useState(1);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!medicamentId || !quantite) {
-      alert("Please fill all fields");
-      return;
-    }
-
-    onAdd({
-      medicament_id: Number(medicamentId),
-      quantite: Number(quantite),
+  const handleCreate = async () => {
+    await addVente({
+      reference: "V-" + Date.now(),
+      notes: "Test sale",
+      lignes: [
+        {
+          medicament: Number(medicamentId),
+          quantite: Number(quantite),
+          prix_unitaire: 10,
+        },
+      ],
     });
 
-    // reset form
     setMedicamentId("");
-    setQuantite("");
+    setQuantite(1);
   };
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <h2>Add Vente</h2>
+  if (loading) return <p>Loading...</p>;
 
-      {/* Medicament Select */}
-      {loading ? (
-        <p>Loading medicaments...</p>
-      ) : (
-        <select
+  return (
+    <div>
+      <h1>Sales</h1>
+
+      {/* Create sale */}
+      <div>
+        <input
+          placeholder="Medicament ID"
           value={medicamentId}
           onChange={(e) => setMedicamentId(e.target.value)}
-        >
-          <option value="">Select Medicament</option>
+        />
 
-          {medicaments.length === 0 ? (
-            <option disabled>No medicaments available</option>
-          ) : (
-            medicaments.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.nom} (Stock: {m.stock_actuel})
-              </option>
-            ))
-          )}
-        </select>
-      )}
+        <input
+          type="number"
+          value={quantite}
+          onChange={(e) => setQuantite(e.target.value)}
+        />
 
-      {/* Quantity */}
-      <input
-        type="number"
-        placeholder="Quantity"
-        value={quantite}
-        onChange={(e) => setQuantite(e.target.value)}
-      />
+        <button onClick={handleCreate}>Create Sale</button>
+      </div>
 
-      {/* Submit */}
-      <button type="submit">Add Vente</button>
-    </form>
+      {/* List ventes */}
+      <div>
+        {ventes.map((v) => (
+          <div key={v.id}>
+            <p>
+              Ref: {v.reference} — Status: {v.statut}
+            </p>
+
+            <button onClick={() => annulerVente(v.id)}>
+              Cancel Sale
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
