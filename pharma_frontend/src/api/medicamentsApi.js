@@ -22,3 +22,11 @@ export const createMedicament = async (data) => {
 export const deleteMedicament = async (id) => {
   await axiosInstance.delete(`/medicaments/${id}/`);
 };
+
+/**
+ * Update medicament
+ */
+export const updateMedicament = async (id, data) => {
+  const res = await axiosInstance.put(`/medicaments/${id}/`, data);
+  return res.data;
+};
