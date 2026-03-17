@@ -35,7 +35,7 @@ export default function MedicamentsPage() {
       {/* Loading */}
       {loading && <p>Loading...</p>}
 
-      {/* ➕ Form */}
+      {/* Form */}
       <MedicamentForm onAdd={addMedicament} />
 
       {/* Empty state */}
@@ -43,7 +43,7 @@ export default function MedicamentsPage() {
         <p>No medicaments found</p>
       )}
 
-      {/* 📋 List */}
+      {/* List */}
       <div style={{ marginTop: "20px" }}>
         {medicaments.map((med) => (
           <div
@@ -60,6 +60,13 @@ export default function MedicamentsPage() {
           >
             <p>
               <strong>{med.nom}</strong> — Stock: {med.stock_actuel}
+              
+              {/* LOW STOCK INDICATOR */}
+              {med.stock_actuel <= med.stock_minimum && (
+                <span style={{ color: "red", marginLeft: "10px" }}>
+                  ⚠ Low Stock
+                </span>
+              )}
             </p>
 
             <button
