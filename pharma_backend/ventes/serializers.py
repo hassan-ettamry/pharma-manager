@@ -6,14 +6,9 @@ from medicaments.models import Medicament
 
 
 class LigneVenteSerializer(serializers.ModelSerializer):
-    """
-    Serializer for sale line items.
-    """
-
     class Meta:
         model = LigneVente
-        fields = "__all__"
-
+        fields = ["medicament", "quantite", "prix_unitaire"]
 
 class VenteSerializer(serializers.ModelSerializer):
     """
@@ -26,6 +21,7 @@ class VenteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vente
         fields = "__all__"
+        read_only_fields = ["total_ttc"]
 
     def create(self, validated_data):
         """
@@ -36,7 +32,7 @@ class VenteSerializer(serializers.ModelSerializer):
 
         with transaction.atomic():
 
-            vente = Vente.objects.create(**validated_data)
+            vente = Vente.objects.create(total_ttc=0, **validated_data)
 
             total = 0
 
