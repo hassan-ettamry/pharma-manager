@@ -1,69 +1,69 @@
 import { useState } from "react";
-import { useVentes } from "../hooks/useVentes";
+import { useMedicaments } from "../hooks/useMedicaments";
 
 /**
- * Sales page
+ * Form to create a vente (sale)
  */
-export default function VentesPage() {
-  const { ventes, addVente, annulerVente, loading } = useVentes();
+export default function VenteForm({ onAdd }) {
+  const { medicaments, loading } = useMedicaments();
 
   const [medicamentId, setMedicamentId] = useState("");
-  const [quantite, setQuantite] = useState(1);
+  const [quantite, setQuantite] = useState("");
 
-  const handleCreate = async () => {
-    await addVente({
-      reference: "V-" + Date.now(),
-      notes: "Test sale",
-      lignes: [
-        {
-          medicament: Number(medicamentId),
-          quantite: Number(quantite),
-          prix_unitaire: 10,
-        },
-      ],
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!medicamentId || !quantite) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    onAdd({
+      medicament_id: Number(medicamentId),
+      quantite: Number(quantite),
     });
 
+    // reset form
     setMedicamentId("");
-    setQuantite(1);
+    setQuantite("");
   };
 
-  if (loading) return <p>Loading...</p>;
-
   return (
-    <div>
-      <h1>Sales</h1>
+    <form onSubmit={handleSubmit}>
+      <h2>Add Vente</h2>
 
-      {/* Create sale */}
-      <div>
-        <input
-          placeholder="Medicament ID"
+      {/* Medicament Select */}
+      {loading ? (
+        <p>Loading medicaments...</p>
+      ) : (
+        <select
           value={medicamentId}
           onChange={(e) => setMedicamentId(e.target.value)}
-        />
+        >
+          <option value="">Select Medicament</option>
 
-        <input
-          type="number"
-          value={quantite}
-          onChange={(e) => setQuantite(e.target.value)}
-        />
+          {medicaments.length === 0 ? (
+            <option disabled>No medicaments available</option>
+          ) : (
+            medicaments.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.nom} (Stock: {m.stock_actuel})
+              </option>
+            ))
+          )}
+        </select>
+      )}
 
-        <button onClick={handleCreate}>Create Sale</button>
-      </div>
+      {/* Quantity */}
+      <input
+        type="number"
+        placeholder="Quantity"
+        value={quantite}
+        onChange={(e) => setQuantite(e.target.value)}
+      />
 
-      {/* List ventes */}
-      <div>
-        {ventes.map((v) => (
-          <div key={v.id}>
-            <p>
-              Ref: {v.reference} — Status: {v.statut}
-            </p>
-
-            <button onClick={() => annulerVente(v.id)}>
-              Cancel Sale
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
+      {/* Submit */}
+      <button type="submit">Add Vente</button>
+    </form>
   );
 }
