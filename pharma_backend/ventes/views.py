@@ -8,6 +8,9 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 from .models import Vente
 from .serializers import VenteSerializer
 
+import csv
+from django.http import HttpResponse
+
 
 @extend_schema_view(
     list=extend_schema(
@@ -60,3 +63,29 @@ class VenteViewSet(ModelViewSet):
             {"detail": "Vente annulée et stock restauré"},
             status=status.HTTP_200_OK
         )
+    
+    @action(detail=False, methods=["get"])
+    def export_csv(self, request):
+        """
+        Export ventes as CSV
+        """
+
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="ventes.csv"'
+
+        writer = csv.writer(response)
+
+        writer.writerow(["ID", "Reference", "Total", "Statut", "Date"])
+
+        ventes = self.get_queryset()
+
+        for v in ventes:
+            writer.writerow([
+                v.id,
+                v.reference,
+                v.total_ttc,
+                v.statut,
+                v.date_vente,
+            ])
+
+        return response
