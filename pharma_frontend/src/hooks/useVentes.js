@@ -18,12 +18,14 @@ export const useVentes = () => {
    */
   const loadVentes = async () => {
     setLoading(true);
+    setError(null);
+
     try {
       const data = await fetchVentes();
       setVentes(data.results || data);
     } catch (err) {
-      //setError("Error loading ventes");
-      console.error(err.response.data);
+      setError("Error loading ventes");
+      console.error(err?.response?.data || err.message);
     } finally {
       setLoading(false);
     }
@@ -33,16 +35,26 @@ export const useVentes = () => {
    * Create sale
    */
   const addVente = async (data) => {
-    await createVente(data);
-    loadVentes();
+    try {
+      await createVente(data);
+      loadVentes();
+    } catch (err) {
+      setError("Error creating vente");
+      console.error(err?.response?.data || err.message);
+    }
   };
 
   /**
    * Cancel sale
    */
   const annulerVente = async (id) => {
-    await cancelVente(id);
-    loadVentes();
+    try {
+      await cancelVente(id);
+      loadVentes();
+    } catch (err) {
+      setError("Error cancelling vente");
+      console.error(err?.response?.data || err.message);
+    }
   };
 
   useEffect(() => {

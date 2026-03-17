@@ -5,19 +5,15 @@ import {
   deleteMedicament,
 } from "../api/medicamentsApi";
 
-/**
- * Hook to manage medicaments state
- */
 export const useMedicaments = () => {
   const [medicaments, setMedicaments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  /**
-   * Load medicaments from API
-   */
   const loadMedicaments = async () => {
     setLoading(true);
+    setError(null);
+
     try {
       const data = await fetchMedicaments();
       setMedicaments(data.results || data);
@@ -28,20 +24,22 @@ export const useMedicaments = () => {
     }
   };
 
-  /**
-   * Add new medicament
-   */
   const addMedicament = async (data) => {
-    await createMedicament(data);
-    loadMedicaments();
+    try {
+      await createMedicament(data);
+      loadMedicaments();
+    } catch (err) {
+      setError("Error adding medicament");
+    }
   };
 
-  /**
-   * Delete medicament
-   */
   const removeMedicament = async (id) => {
-    await deleteMedicament(id);
-    loadMedicaments();
+    try {
+      await deleteMedicament(id);
+      loadMedicaments();
+    } catch (err) {
+      setError("Error deleting medicament");
+    }
   };
 
   useEffect(() => {
