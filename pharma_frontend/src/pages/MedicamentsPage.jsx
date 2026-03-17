@@ -1,90 +1,101 @@
+import { useState, useMemo } from "react";
 import { useMedicaments } from "../hooks/useMedicaments";
-import MedicamentForm from "../components/medicaments/MedicamentForm";
 
-/**
- * Medicaments main page
- */
 export default function MedicamentsPage() {
+  const [search, setSearch] = useState("");
+  const [editing, setEditing] = useState(null);
+
+  const [nom, setNom] = useState("");
+  const [dci, setDci] = useState("");
+
+  const filters = useMemo(() => ({ search }), [search]);
+
   const {
     medicaments,
     loading,
     error,
     addMedicament,
     removeMedicament,
-  } = useMedicaments();
+    editMedicament,
+  } = useMedicaments(filters);
+
+  const handleSubmit = async () => {
+    if (!nom || !dci) return;
+
+    if (editing) {
+      await editMedicament(editing.id, { nom, dci });
+      setEditing(null);
+    } else {
+      await addMedicament({ nom, dci });
+    }
+
+    setNom("");
+    setDci("");
+  };
+
+  const handleEdit = (m) => {
+    setEditing(m);
+    setNom(m.nom);
+    setDci(m.dci);
+  };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div>
       <h1>Medicaments</h1>
 
-      {/* Error message */}
-      {error && (
-        <div
-          style={{
-            background: "#ffe0e0",
-            color: "#900",
-            padding: "10px",
-            marginBottom: "15px",
-            borderRadius: "5px",
-          }}
-        >
-          {error}
-        </div>
-      )}
+      {/* SEARCH */}
+      <input
+        placeholder="Search medicament..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
 
-      {/* Loading */}
+      {/* ERROR */}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {/* LOADING */}
       {loading && <p>Loading...</p>}
 
-      {/* Form */}
-      <MedicamentForm onAdd={addMedicament} />
+      {/* FORM */}
+      <div>
+        <input
+          placeholder="Nom"
+          value={nom}
+          onChange={(e) => setNom(e.target.value)}
+        />
 
-      {/* Empty state */}
-      {!loading && medicaments.length === 0 && (
-        <p>No medicaments found</p>
-      )}
+        <input
+          placeholder="DCI"
+          value={dci}
+          onChange={(e) => setDci(e.target.value)}
+        />
 
-      {/* List */}
-      <div style={{ marginTop: "20px" }}>
-        {medicaments.map((med) => (
-          <div
-            key={med.id}
-            style={{
-              border: "1px solid #ddd",
-              padding: "10px",
-              marginBottom: "10px",
-              borderRadius: "5px",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <p>
-              <strong>{med.nom}</strong> — Stock: {med.stock_actuel}
-              
-              {/* LOW STOCK INDICATOR */}
-              {med.stock_actuel <= med.stock_minimum && (
-                <span style={{ color: "red", marginLeft: "10px" }}>
-                  ⚠ Low Stock
-                </span>
-              )}
-            </p>
+        <button onClick={handleSubmit}>
+          {editing ? "Update Medicament" : "Add Medicament"}
+        </button>
+      </div>
 
-            <button
-              onClick={() => removeMedicament(med.id)}
-              style={{
-                background: "red",
-                color: "white",
-                border: "none",
-                padding: "5px 10px",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
+      {/* LIST */}
+      <ul>
+        {medicaments.map((m) => (
+          <li key={m.id}>
+            {m.nom} — Stock: {m.stock_actuel}
+
+            {/* LOW STOCK */}
+            {m.stock_actuel <= m.stock_minimum && (
+              <span style={{ color: "red" }}> Low Stock</span>
+            )}
+
+            {/* EDIT */}
+            <button onClick={() => handleEdit(m)}>Edit</button>
+
+            {/* DELETE */}
+            <button onClick={() => removeMedicament(m.id)}>
               Delete
             </button>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

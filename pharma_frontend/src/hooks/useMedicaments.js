@@ -3,9 +3,10 @@ import {
   fetchMedicaments,
   createMedicament,
   deleteMedicament,
+  updateMedicament,
 } from "../api/medicamentsApi";
 
-export const useMedicaments = () => {
+export const useMedicaments = (filters = {}) => {
   const [medicaments, setMedicaments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -15,7 +16,7 @@ export const useMedicaments = () => {
     setError(null);
 
     try {
-      const data = await fetchMedicaments();
+      const data = await fetchMedicaments(filters);
       setMedicaments(data.results || data);
     } catch (err) {
       setError("Error loading medicaments");
@@ -42,9 +43,19 @@ export const useMedicaments = () => {
     }
   };
 
+  const editMedicament = async (id, data) => {
+    try {
+      await updateMedicament(id, data);
+      loadMedicaments();
+    } catch (err) {
+      setError("Error updating medicament");
+    }
+  };
+
+  // reload when filters change
   useEffect(() => {
     loadMedicaments();
-  }, []);
+  }, [filters]);
 
   return {
     medicaments,
@@ -52,5 +63,6 @@ export const useMedicaments = () => {
     error,
     addMedicament,
     removeMedicament,
+    editMedicament,
   };
 };
