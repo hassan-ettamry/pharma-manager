@@ -34,10 +34,11 @@ This project was developed as part of a technical test.
 
 ## 📁 Project Structure
 
+```
 pharma-manager/
-│
-├── pharma_backend/    # Django API
-├── pharma_frontend/   # React app
+├── pharma_backend/  # Django API
+└── pharma_frontend/ # React app
+```
 
 ---
 
@@ -45,7 +46,9 @@ pharma-manager/
 
 ### 🔹 Backend
 
+```bash
 cd pharma_backend
+
 python -m venv venv
 
 # Windows
@@ -58,20 +61,30 @@ pip install -r requirements.txt
 
 python manage.py migrate
 python manage.py runserver
+```
 
 Swagger:
 
+```
 http://127.0.0.1:8000/api/schema/swagger-ui/
+```
+
+---
 
 ### 🔹 Frontend
 
+```bash
 cd pharma_frontend
+
 npm install
 npm run dev
+```
 
 App:
 
+```
 http://localhost:5173
+```
 
 ---
 
@@ -95,9 +108,11 @@ http://localhost:5173
 
 ## 📌 API Endpoints
 
-- /api/v1/medicaments/
-- /api/v1/categories/
-- /api/v1/ventes/
+```
+/api/v1/medicaments/
+/api/v1/categories/
+/api/v1/ventes/
+```
 
 ---
 
